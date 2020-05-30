@@ -1,0 +1,89 @@
+<HTML>
+
+<meta name="viewport" content="width=device-width, 
+    initial-scale=1, maximum-scale=1, user-scalable=0"/>
+
+<style>
+canvas {
+	display:block;
+	background:#004058;
+	user-select:none;
+	
+}
+*{
+	margin: 0;
+   	padding: 0;
+}
+</style>
+
+<CANVAS id='gamewindow'></<CANVAS>
+
+
+<SCRIPT>
+
+
+var canvas = document.getElementById('gamewindow');
+var ctx = canvas.getContext('2d')
+
+canvas.width = window.innerWidth //360;
+canvas.height = window.innerHeight //640;
+
+function randomINT(num){
+	return Math.floor(Math.random()*(num+1))
+}
+function cycleArray(array){
+	array.push(array.shift())
+}
+class Stars{
+  constructor(count,size,speed,width,height,vertical = true){
+	this.stars = [];
+	this.color = ['#00e8d8','#a4effc','white','#d8f878'];
+	this.size = size;
+	this.speed = speed;
+	this.maxSpeed = speed;
+	this.vertical = vertical;
+	this.width = width;
+	this.height = height;
+	this.time = 0;
+	for(let i = 0; i < count; i++){
+		this.stars.push([randomINT(width-this.size),randomINT(height-this.size)])
+	}
+  }
+  update(){
+	ctx.fillStyle = this.color[0]
+	
+	if (this.vertical) this.moveStars(1,this.height);
+	else this.moveStars(0,this.width);
+
+	if (this.time == 15){
+		this.time = 0
+		cycleArray(this.color)
+	}
+	this.time++
+  }
+  moveStars(position,bounds){
+	  this.stars.forEach(star =>{
+		var warp = Math.max(0,this.speed-10) * 4
+		ctx.fillRect(star[0],star[1],this.size+warp,this.size)
+		star[position] += this.speed
+		if(star[position] > bounds) star[position] -= bounds + this.size + warp ;
+		else if (star[position] < -this.size) star[position] += bounds + this.size + warp;
+	})
+	this.speed = Math.min(this.speed + .5, this.maxSpeed)
+	
+  }
+ 
+}
+
+var starfield = new Stars(12,6,3,canvas.width,canvas.height)
+var starfield2 = new Stars(12,3,1,canvas.width,canvas.height)
+
+function loop(){
+	ctx.clearRect(0,0,canvas.width,canvas.height)
+	requestAnimationFrame(loop);
+	starfield.update();
+	starfield2.update();
+}
+loop()
+</SCRIPT>
+</HTML>
