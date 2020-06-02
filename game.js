@@ -34,7 +34,6 @@ class EnemySpawner{
 		}
 	}
 	update(){
-		
 		if (this.time >= this.spawnDelay-this.speed){
 			this.time=0;
 			if (this.deadEnemies.length > 0){
@@ -64,7 +63,7 @@ class EnemySpawner{
 	}
 		
 	draw(){
-		ctx.fillStyle = 'orange'
+		ctx.fillStyle = '#e45c10'
 		this.liveEnemies.forEach(enemy => {
 			enemy.draw();
 		})
@@ -86,20 +85,18 @@ function loop(){
 	GAME.background.draw();
 	GAME.spawner.update();
 	GAME.spawner.draw();
+	touchY = null;
+	touchX = null;
 }
 
-var touchX = null, touchY = null; touchTime = 0;
+var touchX = null, touchY = null;
 window.addEventListener('touchstart',(e)=>{
-	touchTime = e.timeStamp;
+	touchX = e.changedTouches[0].clientX;
+	touchY = e.changedTouches[0].clientY;
 	GAME.background.starfields[0].maxSpeed = 40;
 	GAME.background.starfields[1].maxSpeed = 30;
 })
 window.addEventListener('touchend', (e)=>{
-	if (e.timeStamp - touchTime < 500){
-		touchX = e.changedTouches[0].clientX;
-		touchY = e.changedTouches[0].clientY;
-		touchTime = 0;
-	}
 	GAME.background.starfields[0].maxSpeed = 3;
 	GAME.background.starfields[1].maxSpeed = 1;
 })
