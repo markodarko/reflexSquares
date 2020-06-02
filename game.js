@@ -95,7 +95,7 @@ window.addEventListener('touchstart',(e)=>{
 	GAME.background.starfields[1].maxSpeed = 30;
 })
 window.addEventListener('touchend', (e)=>{
-	if (e.timeStamp - touchTime < 200){
+	if (e.timeStamp - touchTime < 500){
 		touchX = e.changedTouches[0].clientX;
 		touchY = e.changedTouches[0].clientY;
 		touchTime = 0;
