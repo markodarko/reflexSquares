@@ -8,23 +8,25 @@ const GRID = Math.floor(canvas.width/5)
 
 class EnemySquare{
 	constructor(size){
-		this.x = 0;
-		this.y = canvas.height;
+		this.dead = false;
+		this.setPosition()
 		this.w = this.h = size;
 	}
 	draw(){
 		ctx.fillRect(this.x,this.y,this.w,this.h);
 	}
 	setPosition(){
+		this.score = 300;
 		this.x = randomINT(4)*GRID;
+		this.y = canvas.height;
 	}
 }
 
 class EnemySpawner{
 	constructor(){
-		this.time = 0;
-		this.spawnDelay = 50;
-		this.speed = 5;
+		this.speed = 3;
+		this.time = this.spawnDelay = 100//Math.floor(GRID/this.speed+this.speed);
+		
 		this.liveEnemies = [];
 		this.deadEnemies = [];
 		for (let i=0; i<10; i++){
@@ -32,24 +34,35 @@ class EnemySpawner{
 		}
 	}
 	update(){
-		this.time++;
-		if (this.time == this.spawnDelay){
+		
+		if (this.time >= this.spawnDelay-this.speed){
 			this.time=0;
 			if (this.deadEnemies.length > 0){
-			var enemySquare = this.deadEnemies.shift()
-			enemySquare.setPosition()
-			this.liveEnemies.unshift(enemySquare)
+			this.liveEnemies.unshift(this.deadEnemies.shift())
 			}
 		}
-		for(let i = this.liveEnemies.length-1; i>0; i--){
+		for(let i = this.liveEnemies.length-1; i>=0; i--){
 			let enemy = this.liveEnemies[i];
 			enemy.y -= this.speed;
-			if (enemy.y < -enemy.h){
-				enemy.y = canvas.height;
-				this.deadEnemies.push(this.liveEnemies.pop())
+			if (enemy.dead){
+				enemy.setPosition();
+				this.deadEnemies.push(...this.liveEnemies.splice(i,1))
+				enemy.dead = false;
+				continue;
 			}
+			if (enemy.y < -enemy.h){
+				enemy.dead = true;
+				continue;
+			}
+			if (touchX == null) continue;
+			if (touchX < enemy.x || touchX > enemy.x + enemy.w) continue;
+			if (touchY < enemy.y || touchY > enemy.y + enemy.h) continue;
+				enemy.dead = true;
+				touchX = touchY = null;
 		}
+		this.time++;
 	}
+		
 	draw(){
 		ctx.fillStyle = 'orange'
 		this.liveEnemies.forEach(enemy => {
@@ -74,13 +87,22 @@ function loop(){
 	GAME.spawner.update();
 	GAME.spawner.draw();
 }
-window.addEventListener('touchstart',()=>{
+
+var touchX = null, touchY = null; touchTime = 0;
+window.addEventListener('touchstart',(e)=>{
+	touchTime = e.timeStamp;
 	GAME.background.starfields[0].maxSpeed = 40;
 	GAME.background.starfields[1].maxSpeed = 30;
 })
-window.addEventListener('touchend', ()=>{
+window.addEventListener('touchend', (e)=>{
+	if (e.timeStamp - touchTime < 200){
+		touchX = e.changedTouches[0].clientX;
+		touchY = e.changedTouches[0].clientY;
+		touchTime = 0;
+	}
 	GAME.background.starfields[0].maxSpeed = 3;
 	GAME.background.starfields[1].maxSpeed = 1;
 })
+
 var GAME = new GameControl();
 loop();
