@@ -3,39 +3,11 @@ var ctx = canvas.getContext('2d')
 
 canvas.width = 360//window.innerWidth;
 canvas.height = 640//window.innerHeight; 
+const GRID_OFFSET = 2;
+const SCREEN_OFFSET = Math.floor((GRID_OFFSET*5)/2)
+const GRID = Math.floor(canvas.width/5)//-GRID_OFFSET
 
-const GRID = Math.floor(canvas.width/5)
 
-class Flash{
-	constructor(a = 0, inc = .1){
-			this.alpha = a;
-			this.inc = inc;
-	}
-	draw(x,y,w,h){
-		if (this.alpha == 0)return
-		ctx.save();
-		ctx.globalAlpha = this.alpha
-		ctx.fillRect(x,y,w,h)
-		this.alpha = Math.max(this.alpha - this.inc, 0)
-		ctx.restore();
-	}
-}
-class FlashLoop extends Flash{
-	constructor(a,inc){
-		super(a,inc);
-	}
-	draw(x,y,w,h){
-		if (this.alpha == 0) {
-			this.inc *= -1;
-			this.alpha -= this.inc;
-		}
-		if (this.alpha >= 1) {
-			this.alpha = 1;
-			this.inc *= -1;
-		}
-		super.draw(x,y,w,h);
-	}
-}
 
 class EnemySquare{
 	constructor(size,color){
@@ -53,7 +25,7 @@ class EnemySquare{
 	}
 	setPosition(){
 		this.score = 300;
-		this.x = randomINT(4)*GRID;
+		this.x = randomINT(4)*GRID//+SCREEN_OFFSET;
 		this.y = canvas.height;
 	}
 }
