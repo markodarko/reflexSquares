@@ -7,7 +7,7 @@ canvas.height = 640//window.innerHeight;
 const GRID = Math.floor(canvas.width/5)
 
 class Flash{
-	constructor(a = 0, inc = .05){
+	constructor(a = 0, inc = .1){
 			this.alpha = a;
 			this.inc = inc;
 	}
@@ -88,6 +88,7 @@ class EnemySpawner{
 			}
 			if (enemy.y < -enemy.h){
 				enemy.dead = true;
+				GAME.takeDamage();
 				continue;
 			}
 			if (TouchControls.touchX == null) continue;
