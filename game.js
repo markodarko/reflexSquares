@@ -79,16 +79,36 @@ class EnemySpawner{
 		})
 	}
 }
+class DamageMeter{
+	constructor(){
+		this.x = canvas.width - SCREEN_OFFSET;
+		this.multiplier = 0;
+		this.total = 0;
+		this.increment = Math.floor(canvas.height / 20)
+	}
+	draw(){
+		if(this.total == 0){this.multiplier = 0;return;}
+		ctx.fillStyle = '#e40058';
+		ctx.fillRect(this.x,0,SCREEN_OFFSET,this.total);
+		ctx.fillRect(0,0,SCREEN_OFFSET,this.total);
+		this.total = Math.max(this.total-.2, 0 );
+	}
+	addDamage(){
+		this.multiplier = Math.min(this.multiplier + this.increment, this.increment * 5)
+		this.total += this.multiplier;
+	}
+}
 
 class GameControl{
 	constructor(){
-		this.score = 0;
+		this.damage = new DamageMeter();
 		this.flash = new Flash();
 		this.background = new GameBackground()
 		this.spawner = new EnemySpawner()
 	}
 	takeDamage(){
 		this.flash.alpha = 1;
+		this.damage.addDamage();
 	}
 	drawFlash(){
 		ctx.fillStyle = '#e40058'
@@ -104,6 +124,7 @@ function loop(){
 	GAME.spawner.update();
 	GAME.drawFlash();
 	GAME.spawner.draw();
+	GAME.damage.draw();
 	TouchControls.clearControl();
 }
 

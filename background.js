@@ -7,7 +7,6 @@ class Starfield{
 	this.vertical = vertical;
 	this.width = width;
 	this.height = height;
-	this.time = 0;
 	for(let i = 0; i < count; i++){
 		this.stars.push([randomINT(width-this.size),randomINT(height-this.size)])
 	}
