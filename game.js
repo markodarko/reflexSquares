@@ -28,6 +28,12 @@ class EnemySquare{
 		this.x = randomINT(4)*GRID//+SCREEN_OFFSET;
 		this.y = canvas.height;
 	}
+	tapCheck(){
+		var X = TouchControls.touchX, Y = TouchControls.touchY;
+		if (X < this.x || X > this.x + this.w) return false;
+		if (Y < this.y || Y > this.y + this.h) return false;
+		return this.dead = true;
+	}
 }
 
 class EnemySpawner{
@@ -63,15 +69,11 @@ class EnemySpawner{
 				GAME.takeDamage();
 				continue;
 			}
-			if (TouchControls.touchX == null) continue;
-			var X = TouchControls.touchX, Y = TouchControls.touchY;
-			if (X < enemy.x || X > enemy.x + enemy.w) continue;
-			if (Y < enemy.y || Y > enemy.y + enemy.h) continue;
-			enemy.dead = true;
-			hitEnemy = true;
+			if (hitEnemy || TouchControls.touchX == null) continue;
+			hitEnemy = enemy.tapCheck();
 		}
 		this.time++;
-		if (hitEnemy == false && TouchControls.touchX)GAME.takeDamage();
+		if (!hitEnemy && TouchControls.touchX)GAME.takeDamage();
 	}
 	draw(){
 		this.liveEnemies.forEach(enemy => {
@@ -84,6 +86,7 @@ class DamageMeter{
 		this.x = canvas.width - SCREEN_OFFSET;
 		this.multiplier = 0;
 		this.total = 0;
+		this.delay = 0;
 		this.increment = Math.floor(canvas.height / 20)
 	}
 	draw(){
@@ -91,9 +94,12 @@ class DamageMeter{
 		ctx.fillStyle = '#e40058';
 		ctx.fillRect(this.x,0,SCREEN_OFFSET,this.total);
 		ctx.fillRect(0,0,SCREEN_OFFSET,this.total);
-		this.total = Math.max(this.total-.2, 0 );
+		if (this.delay == 0){
+			this.total = Math.max(this.total-1, 0 );
+		}else this.delay--;
 	}
 	addDamage(){
+		this.delay = 200;
 		this.multiplier = Math.min(this.multiplier + this.increment, this.increment * 5)
 		this.total += this.multiplier;
 	}
