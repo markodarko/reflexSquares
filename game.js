@@ -1,12 +1,12 @@
 var canvas = document.getElementById('gamewindow');
 var ctx = canvas.getContext('2d')
 
-canvas.width = 360//window.innerWidth;
-canvas.height = 640//window.innerHeight; 
+canvas.width = 360;//window.innerWidth;
+canvas.height = 640;//window.innerHeight; 
 const GRID_OFFSET = 2;
-const SCREEN_OFFSET = Math.floor((GRID_OFFSET*5)/2)
-const GRID = Math.floor(canvas.width/5)//-GRID_OFFSET
-
+const SCREEN_OFFSET = Math.floor((GRID_OFFSET*5)/2);
+const GRID = Math.floor(canvas.width/5);//-GRID_OFFSET
+const DAMAGE_UNIT = Math.ceil(canvas.height/20);
 
 
 class EnemySquare{
@@ -100,8 +100,8 @@ class DamageMeter{
 	}
 	addDamage(){
 		this.delay = 200;
-		this.multiplier = Math.min(this.multiplier + this.increment, this.increment * 5)
-		this.total += this.multiplier;
+		this.multiplier = Math.min(this.multiplier + 1, 5)// Math.min(this.multiplier + this.increment, this.increment * 5)
+		this.total += this.multiplier * DAMAGE_UNIT;
 	}
 }
 
